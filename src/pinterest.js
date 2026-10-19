@@ -319,9 +319,11 @@ function assertPinimg(u) {
   return url;
 }
 
-// i.pinimg.com/<size>/aa/bb/cc/hash.jpg — swap the size segment.
+// i.pinimg.com/<size>/aa/bb/cc/hash.jpg — swap the size segment. Resized renditions are
+// always JPEG, even when the original is a PNG or GIF, so the extension changes with them.
 export function resizeUrl(u, size) {
-  return u.replace(/(pinimg\.com\/)(originals|\d+x\d*(?:_RS)?)\//, `$1${size}/`);
+  const swapped = u.replace(/(pinimg\.com\/)(originals|\d+x\d*(?:_RS)?)\//, `$1${size}/`);
+  return size === 'originals' ? swapped : swapped.replace(/\.(png|gif|webp)$/i, '.jpg');
 }
 
 const EXT = { 'image/jpeg': 'jpg', 'image/png': 'png', 'image/gif': 'gif', 'image/webp': 'webp' };

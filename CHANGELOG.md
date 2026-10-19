@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+### Fixed
+- Thumbnails and previews of PNG/GIF originals now use Pinterest's JPEG renditions instead of falling back to the full-size original (~16 KB instead of ~1.6 MB per preview).
+
 ## [1.0.1] - 2026-10-19
 
 ### Added
