@@ -1,6 +1,6 @@
 {
   "name": "@sunkimkk/pinterest-mcp",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "mcpName": "io.github.sunkimk/pinterest-mcp",
   "description": "Let your AI agent browse Pinterest: search pins, see images, related pins, boards and downloads for Claude Code, Codex and any MCP client. No login, no API key, no browser.",
   "keywords": [
