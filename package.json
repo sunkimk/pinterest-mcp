@@ -1,7 +1,7 @@
 {
-  "name": "pinterest-mcp-server",
+  "name": "@sunkimkk/pinterest-mcp",
   "version": "1.0.0",
-  "description": "Pinterest MCP server for Claude Code, Codex and any MCP client: search pins, preview images, related pins, boards and downloads. No login, no API key, no browser.",
+  "description": "Let your AI agent browse Pinterest: search pins, see images, related pins, boards and downloads for Claude Code, Codex and any MCP client. No login, no API key, no browser.",
   "keywords": [
     "mcp",
     "mcp-server",
@@ -15,7 +15,7 @@
   "type": "module",
   "license": "MIT",
   "bin": {
-    "pinterest-mcp-server": "src/server.js"
+    "pinterest-mcp": "src/server.js"
   },
   "main": "src/server.js",
   "files": [
@@ -41,5 +41,8 @@
   "homepage": "https://github.com/sunkimk/pinterest-mcp#readme",
   "bugs": {
     "url": "https://github.com/sunkimk/pinterest-mcp/issues"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

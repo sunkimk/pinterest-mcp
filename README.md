@@ -1,116 +1,172 @@
-# Pinterest MCP
+<div align="center">
+  <a href="https://github.com/sunkimk/pinterest-mcp">
+    <img src="https://raw.githubusercontent.com/sunkimk/pinterest-mcp/main/assets/banner.png" alt="Pinterest MCP" width="820" />
+  </a>
 
-**Let your AI coding agent browse Pinterest for you.**
-A Pinterest MCP server for Claude Code, Codex, and any other MCP client: search pins, actually look at the images, find similar pins, read boards, and download originals.
-**No login, no API key, no headless browser.**
+  <p>
+    <a href="https://www.npmjs.com/package/@sunkimkk/pinterest-mcp"><img alt="npm version" src="https://img.shields.io/npm/v/@sunkimkk/pinterest-mcp?color=F0245E&label=npm" /></a>
+    <a href="https://www.npmjs.com/package/@sunkimkk/pinterest-mcp"><img alt="npm downloads" src="https://img.shields.io/npm/dw/@sunkimkk/pinterest-mcp?color=A3127F" /></a>
+    <a href="https://github.com/sunkimk/pinterest-mcp/stargazers"><img alt="GitHub stars" src="https://img.shields.io/github/stars/sunkimk/pinterest-mcp?style=flat&color=FF6B57" /></a>
+    <a href="./LICENSE"><img alt="MIT License" src="https://img.shields.io/github/license/sunkimk/pinterest-mcp?color=444" /></a>
+    <img alt="Node.js" src="https://img.shields.io/badge/node-%E2%89%A520.18-444" />
+    <img alt="MCP" src="https://img.shields.io/badge/MCP-compatible-1D0B1F" />
+  </p>
 
-[English](#english) · 中文
+  <p><b>English</b> · <a href="./README.zh-CN.md">简体中文</a></p>
+</div>
 
----
+**Pinterest MCP** gives Claude Code, Codex, Cursor and any other MCP client direct access to Pinterest — search pins, *actually look at* the images, follow "more like this", read boards, and download originals. It's built for designers and front-end developers who start every task by collecting references.
 
-做设计、写前端时最常见的一步就是「先找参考」。这个 MCP 把 Pinterest 接进 AI 助手：你一句话说需求，它去搜、去看、去挑，再把喜欢的原图下载到本地，接着就能直接拿来做原型、写页面。
+No Pinterest login. No API key. No headless browser.
 
-## 特点
+## ❌ Without Pinterest MCP
 
-- **快**：直接调用 Pinterest 网页使用的数据接口，不启动浏览器，20 张图约 2–3 秒。
-- **AI 真能「看见」图**：可以把缩略图一起交给模型，让它判断风格、配色和版式，而不只是读标题。
-- **信息完整**：每个 Pin 都带标题、描述、原图地址和尺寸、主色、来源网站、所属画板、作者、日期；自动过滤广告。
-- **能顺藤摸瓜**：找相似图、读整个画板、支持翻页。
-- **稳**：翻页会保持会话，遇到 Pinterest 偶发的「假到底」会自动重试。
-- **省 token**：折叠大段话题标签，去掉用不上的字段。
-- **零门槛**：不用登录 Pinterest，不用申请开发者账号，不用装 Chrome。
+- You switch to the browser, search, scroll, save images by hand, and drag them back into the chat.
+- The AI only gets the images you remembered to paste, without their source, colours or context.
 
-## 工具
+## ✅ With Pinterest MCP
 
-| 工具 | 作用 |
-|---|---|
-| `pinterest_search` | 按关键词搜索（中英文都行），可翻页，可附带缩略图 |
-| `pinterest_get_pin` | 查看单个 Pin 的完整详情（支持 Pin 链接、`pin.it` 短链或数字 ID） |
-| `pinterest_related_pins` | 「更多类似内容」：找与某个 Pin 相似的图 |
-| `pinterest_board_pins` | 读取某个公开画板里的 Pin |
-| `pinterest_preview_images` | 把图片地址转成缩略图，让模型看到图 |
-| `pinterest_download` | 批量下载原图（原图取不到时自动降级到 736px） |
-
-`search` / `related_pins` / `board_pins` 都支持 `previews: N`，会附上前 N 张缩略图。
-
-## 安装
-
-需要 Node.js ≥ 20.18。
-
-```bash
-git clone https://github.com/sunkimk/pinterest-mcp.git
-cd pinterest-mcp
-npm install
+```text
+> Find 20 dark dashboard UIs on Pinterest, look at the first 8,
+  pick the 3 with the most restrained palette and download them.
 ```
 
-**Claude Code**
+The agent searches, looks at the thumbnails, explains its picks, saves full-resolution files to disk — and can go straight on to build the screen from them.
+
+## Features
+
+- ⚡ **Fast** — talks to the same JSON endpoints pinterest.com uses; ~2–3 s for 20 pins, no Chrome to launch.
+- 👀 **The model can see** — optional thumbnails are returned as images, so the agent judges style, layout and colour, not just titles.
+- 🧾 **Rich metadata** — title, description, full-size URL and dimensions, dominant colour, source site, board, creator, date. Ads are filtered out.
+- 🔁 **Go deeper** — related pins, whole boards, pagination with bookmarks.
+- 🛡️ **Robust** — keeps an anonymous session and retries Pinterest's occasional "fake end of feed".
+- 🪶 **Token-friendly** — hashtag walls collapsed, unusable fields dropped.
+- 📥 **Downloads** — originals with automatic 736px fallback, only from `*.pinimg.com`.
+
+## Quick start
+
+Requires **Node.js ≥ 20.18**.
+
+<details open>
+<summary><b>Claude Code</b></summary>
 
 ```bash
-claude mcp add pinterest --scope user -- node /绝对路径/pinterest-mcp/src/server.js
+claude mcp add pinterest --scope user -- npx -y @sunkimkk/pinterest-mcp
 ```
+</details>
 
-**Codex**（`~/.codex/config.toml`）
+<details>
+<summary><b>Codex</b> — <code>~/.codex/config.toml</code></summary>
 
 ```toml
 [mcp_servers.pinterest]
-command = "node"
-args = ["/绝对路径/pinterest-mcp/src/server.js"]
+command = "npx"
+args = ["-y", "@sunkimkk/pinterest-mcp"]
+```
+</details>
+
+<details>
+<summary><b>Cursor / Claude Desktop / Windsurf / others</b> — JSON config</summary>
+
+```json
+{
+  "mcpServers": {
+    "pinterest": {
+      "command": "npx",
+      "args": ["-y", "@sunkimkk/pinterest-mcp"]
+    }
+  }
+}
 ```
 
-**Claude Desktop / Cursor 等**：在各自的 MCP 配置里加入同样的 `command` 和 `args`。
+Cursor: `~/.cursor/mcp.json` · Claude Desktop: `claude_desktop_config.json`
+</details>
 
-## 用法示例
-
-直接用自然语言说，不用记工具名：
-
-- 「在 Pinterest 上搜 20 张深色风格的数据仪表盘 UI，给我看前 8 张缩略图」
-- 「挑出配色最克制的 5 张，总结它们的布局和字体特点」
-- 「找和这张类似的：https://www.pinterest.com/pin/1128714725389331478/」
-- 「把第 2、5、7 张原图下载到 ~/Desktop/灵感/登录页」
-
-## 环境变量
-
-| 变量 | 默认值 | 说明 |
-|---|---|---|
-| `MCP_PINTEREST_DOWNLOAD_DIR` | `~/Downloads/pinterest-mcp` | 下载根目录 |
-| `MCP_PINTEREST_PROXY` | 系统的 `HTTPS_PROXY` | HTTP 代理（如 `http://127.0.0.1:7890`），连不上 pinterest.com 时设置；不支持 SOCKS |
-| `MCP_PINTEREST_LOCALE` | `en-US` | 请求语言 |
-| `MCP_PINTEREST_TIMEOUT_MS` | `20000` | 单次请求超时（毫秒） |
-
-## 已知限制
-
-- 未登录状态下，搜索结果只有匿名 ID，不能直接拿去调 `get_pin` / `related_pins`（该有的信息搜索结果里已经都有了）。这两个工具需要真实的 Pin 链接（`pinterest.com/pin/<数字>/`）。
-- 用的是 Pinterest 网页自己使用的数据接口，不是官方公开 API，Pinterest 改版时可能需要跟进更新。
-
-## 使用须知
-
-本项目与 Pinterest 官方无关。请只用于个人收集灵感，控制请求频率，遵守 Pinterest 的服务条款，并尊重图片作者的版权：下载的图片仅供参考，不要未经授权商用。
-
-## 测试
+<details>
+<summary><b>From source</b></summary>
 
 ```bash
-npm test
+git clone https://github.com/sunkimk/pinterest-mcp.git
+cd pinterest-mcp && npm install
+claude mcp add pinterest --scope user -- node "$PWD/src/server.js"
+```
+</details>
+
+## Tools
+
+| Tool | What it does |
+|---|---|
+| `pinterest_search` | Keyword search in any language, with pagination and optional thumbnails |
+| `pinterest_get_pin` | Full details of one pin (pin URL, `pin.it` short link or numeric id) |
+| `pinterest_related_pins` | "More like this" for a pin |
+| `pinterest_board_pins` | Pins saved on a public board |
+| `pinterest_preview_images` | Turn image URLs into thumbnails the model can see |
+| `pinterest_download` | Save full-resolution images to disk |
+
+`search`, `related_pins` and `board_pins` accept `previews: N` to attach thumbnails of the first N results.
+
+## Example prompts
+
+- *"Search Pinterest for glassmorphism login screens and show me 8 thumbnails."*
+- *"What do these have in common — layout, palette, typography?"*
+- *"Find pins similar to https://www.pinterest.com/pin/1128714725389331478/"*
+- *"List everything on https://www.pinterest.com/awsmd_com/app-design/"*
+- *"Download #2, #5 and #7 to ~/Desktop/refs/login."*
+
+> Tip: English keywords return far more results. Add words like `ui`, `app`, `dribbble`, `poster` or `moodboard` to steer the style.
+
+## Configuration
+
+| Variable | Default | Description |
+|---|---|---|
+| `MCP_PINTEREST_DOWNLOAD_DIR` | `~/Downloads/pinterest-mcp` | Download root |
+| `MCP_PINTEREST_PROXY` | system `HTTPS_PROXY` | HTTP proxy, e.g. `http://127.0.0.1:7890` (SOCKS not supported) |
+| `MCP_PINTEREST_LOCALE` | `en-US` | Request language |
+| `MCP_PINTEREST_TIMEOUT_MS` | `20000` | Per-request timeout |
+
+Example with Claude Code:
+
+```bash
+claude mcp add pinterest --scope user -e MCP_PINTEREST_PROXY=http://127.0.0.1:7890 -- npx -y @sunkimkk/pinterest-mcp
 ```
 
-会启动服务，并对线上 pinterest.com 逐个调用所有工具。
+## FAQ
 
----
+**Why can't I get details for a search result?**
+Logged-out search results carry anonymous ids that Pinterest won't resolve. Everything they have is already in the search result; `get_pin` and `related_pins` need a real pin link (`pinterest.com/pin/<number>/`).
 
-## English
+**Network errors?**
+If pinterest.com is blocked where you are, set `MCP_PINTEREST_PROXY`.
 
-Pinterest MCP server for Claude Code, Codex and any MCP client. Search pins, let the model see thumbnails, find related pins, read public boards and download full-resolution images — no login, no API key, no headless browser.
+**Will it break?**
+It uses Pinterest's web endpoints rather than the official API, so a Pinterest redesign may require an update. Watch the repo or check the [changelog](./CHANGELOG.md).
+
+## Development
 
 ```bash
 npm install
-claude mcp add pinterest --scope user -- node /absolute/path/pinterest-mcp/src/server.js
+npm test        # spins up the server and calls every tool against live pinterest.com
 ```
 
-Tools: `pinterest_search`, `pinterest_get_pin`, `pinterest_related_pins`, `pinterest_board_pins`, `pinterest_preview_images`, `pinterest_download`. Not affiliated with Pinterest; use responsibly and respect image copyrights.
+See [CHANGELOG.md](./CHANGELOG.md) for release history. Issues and PRs are welcome.
 
-## 致谢
+## Disclaimer
 
-感谢 [terryso/mcp-pinterest](https://github.com/terryso/mcp-pinterest) 最早探索了把 Pinterest 接入 MCP 的思路。
+Not affiliated with, endorsed by, or sponsored by Pinterest. Use it for personal inspiration at a reasonable request rate, follow Pinterest's Terms of Service, and respect creators' copyright — downloaded images are for reference only.
+
+## Acknowledgements
+
+Thanks to [terryso/mcp-pinterest](https://github.com/terryso/mcp-pinterest) for first exploring Pinterest over MCP.
+
+## Star History
+
+<a href="https://star-history.com/#sunkimk/pinterest-mcp&Date">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=sunkimk/pinterest-mcp&type=Date&theme=dark" />
+    <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=sunkimk/pinterest-mcp&type=Date" width="600" />
+  </picture>
+</a>
 
 ## License
 
-MIT
+[MIT](./LICENSE) © sunkimk
