@@ -59,3 +59,6 @@ debug/
 example.js
 
 docs/
+
+# Local editor/agent settings
+.claude/
