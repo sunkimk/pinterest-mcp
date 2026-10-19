@@ -5,7 +5,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## [1.0.1] - 2026-10-19
+
 ### Added
+- Listed on the official MCP Registry as `io.github.sunkimk/pinterest-mcp`.
 - Claude Desktop one-click bundle (`pinterest-mcp.mcpb`) attached to releases; build it with `scripts/build-mcpb.sh`.
 
 ## [1.0.0] - 2026-10-19
@@ -28,5 +31,6 @@ First public release. 🎉
 - Detects Pinterest's occasional "fake end of feed" or replayed page and retries with a fresh session.
 - Promoted pins are filtered out; hashtag walls in descriptions are collapsed to save tokens.
 
-[Unreleased]: https://github.com/sunkimk/pinterest-mcp/compare/v1.0.0...HEAD
+[Unreleased]: https://github.com/sunkimk/pinterest-mcp/compare/v1.0.1...HEAD
+[1.0.1]: https://github.com/sunkimk/pinterest-mcp/compare/v1.0.0...v1.0.1
 [1.0.0]: https://github.com/sunkimk/pinterest-mcp/releases/tag/v1.0.0

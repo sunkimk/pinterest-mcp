@@ -16,7 +16,7 @@ import {
 const MAX_PREVIEWS = 16;
 const READ_ONLY = { readOnlyHint: true, openWorldHint: true };
 
-const server = new McpServer({ name: 'pinterest', version: '1.0.0' });
+const server = new McpServer({ name: 'pinterest', version: '1.0.1' });
 
 const json = (value) => ({ type: 'text', text: JSON.stringify(value) });
 

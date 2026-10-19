@@ -1,0 +1,36 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.sunkimk/pinterest-mcp",
+  "title": "Pinterest MCP",
+  "description": "Search Pinterest, see pin images, find similar pins, read boards, download originals. No login.",
+  "repository": {
+    "url": "https://github.com/sunkimk/pinterest-mcp",
+    "source": "github"
+  },
+  "websiteUrl": "https://github.com/sunkimk/pinterest-mcp",
+  "version": "1.0.1",
+  "packages": [
+    {
+      "registryType": "npm",
+      "identifier": "@sunkimkk/pinterest-mcp",
+      "version": "1.0.1",
+      "transport": {
+        "type": "stdio"
+      },
+      "environmentVariables": [
+        {
+          "name": "MCP_PINTEREST_DOWNLOAD_DIR",
+          "description": "Folder for downloaded images (default ~/Downloads/pinterest-mcp)",
+          "isRequired": false,
+          "format": "string"
+        },
+        {
+          "name": "MCP_PINTEREST_PROXY",
+          "description": "HTTP proxy such as http://127.0.0.1:7890, for networks where pinterest.com is blocked",
+          "isRequired": false,
+          "format": "string"
+        }
+      ]
+    }
+  ]
+}

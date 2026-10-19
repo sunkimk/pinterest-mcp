@@ -3,7 +3,7 @@
   "manifest_version": "0.3",
   "name": "pinterest-mcp",
   "display_name": "Pinterest MCP",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Let your AI agent browse Pinterest: search pins, see images, find similar pins, read boards and download originals. No login, no API key, no browser.",
   "long_description": "Pinterest MCP gives your AI assistant direct access to Pinterest for design inspiration. Search pins in any language, attach thumbnails so the model can actually see them, follow related pins, read public boards and save full-resolution images to disk. It talks to the same JSON endpoints pinterest.com uses, so there is no login, no API key and no headless browser. Not affiliated with Pinterest.",
   "author": {
@@ -23,7 +23,9 @@
     "entry_point": "src/server.js",
     "mcp_config": {
       "command": "node",
-      "args": ["${__dirname}/src/server.js"],
+      "args": [
+        "${__dirname}/src/server.js"
+      ],
       "env": {
         "MCP_PINTEREST_DOWNLOAD_DIR": "${user_config.download_dir}",
         "MCP_PINTEREST_PROXY": "${user_config.proxy}"
@@ -31,12 +33,30 @@
     }
   },
   "tools": [
-    { "name": "pinterest_search", "description": "Search Pinterest pins by keyword, with pagination and optional thumbnails" },
-    { "name": "pinterest_get_pin", "description": "Get full details of one pin from its link or id" },
-    { "name": "pinterest_related_pins", "description": "Find pins similar to a given pin" },
-    { "name": "pinterest_board_pins", "description": "List the pins on a public board" },
-    { "name": "pinterest_preview_images", "description": "Return thumbnails of pin images so the model can see them" },
-    { "name": "pinterest_download", "description": "Save full-resolution pin images to disk" }
+    {
+      "name": "pinterest_search",
+      "description": "Search Pinterest pins by keyword, with pagination and optional thumbnails"
+    },
+    {
+      "name": "pinterest_get_pin",
+      "description": "Get full details of one pin from its link or id"
+    },
+    {
+      "name": "pinterest_related_pins",
+      "description": "Find pins similar to a given pin"
+    },
+    {
+      "name": "pinterest_board_pins",
+      "description": "List the pins on a public board"
+    },
+    {
+      "name": "pinterest_preview_images",
+      "description": "Return thumbnails of pin images so the model can see them"
+    },
+    {
+      "name": "pinterest_download",
+      "description": "Save full-resolution pin images to disk"
+    }
   ],
   "user_config": {
     "download_dir": {
@@ -54,10 +74,23 @@
       "default": ""
     }
   },
-  "keywords": ["pinterest", "design", "inspiration", "moodboard", "images", "search"],
+  "keywords": [
+    "pinterest",
+    "design",
+    "inspiration",
+    "moodboard",
+    "images",
+    "search"
+  ],
   "license": "MIT",
   "compatibility": {
-    "platforms": ["darwin", "win32", "linux"],
-    "runtimes": { "node": ">=20.18.1" }
+    "platforms": [
+      "darwin",
+      "win32",
+      "linux"
+    ],
+    "runtimes": {
+      "node": ">=20.18.1"
+    }
   }
 }

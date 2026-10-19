@@ -9,7 +9,7 @@
     <a href="https://github.com/sunkimk/pinterest-mcp/stargazers"><img alt="GitHub stars" src="https://img.shields.io/github/stars/sunkimk/pinterest-mcp?style=flat&color=FF6B57" /></a>
     <a href="./LICENSE"><img alt="MIT License" src="https://img.shields.io/github/license/sunkimk/pinterest-mcp?color=444" /></a>
     <img alt="Node.js" src="https://img.shields.io/badge/node-%E2%89%A520.18-444" />
-    <img alt="MCP" src="https://img.shields.io/badge/MCP-compatible-1D0B1F" />
+    <a href="https://registry.modelcontextprotocol.io/v0/servers?search=io.github.sunkimk/pinterest-mcp"><img alt="MCP Registry" src="https://img.shields.io/badge/MCP_Registry-io.github.sunkimk%2Fpinterest--mcp-1D0B1F" /></a>
   </p>
 
   <p><b>English</b> · <a href="./README.zh-CN.md">简体中文</a></p>
