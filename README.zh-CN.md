@@ -66,6 +66,12 @@ args = ["-y", "@sunkimkk/pinterest-mcp"]
 </details>
 
 <details>
+<summary><b>Claude Desktop</b>：一键安装</summary>
+
+从最新 Release 下载 [`pinterest-mcp.mcpb`](https://github.com/sunkimk/pinterest-mcp/releases/latest/download/pinterest-mcp.mcpb)，双击即可。Claude Desktop 会弹出安装窗口，可以选择下载文件夹和代理（可选）。
+</details>
+
+<details>
 <summary><b>Cursor / Claude Desktop / Windsurf 等</b>：JSON 配置</summary>
 
 ```json

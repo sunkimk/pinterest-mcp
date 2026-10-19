@@ -66,6 +66,12 @@ args = ["-y", "@sunkimkk/pinterest-mcp"]
 </details>
 
 <details>
+<summary><b>Claude Desktop</b> — one-click install</summary>
+
+Download [`pinterest-mcp.mcpb`](https://github.com/sunkimk/pinterest-mcp/releases/latest/download/pinterest-mcp.mcpb) from the latest release and double-click it. Claude Desktop shows an install dialog where you can pick a download folder and an optional proxy.
+</details>
+
+<details>
 <summary><b>Cursor / Claude Desktop / Windsurf / others</b> — JSON config</summary>
 
 ```json

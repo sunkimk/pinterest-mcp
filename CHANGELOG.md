@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+### Added
+- Claude Desktop one-click bundle (`pinterest-mcp.mcpb`) attached to releases; build it with `scripts/build-mcpb.sh`.
+
 ## [1.0.0] - 2026-10-19
 
 First public release. 🎉
