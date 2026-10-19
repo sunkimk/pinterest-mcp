@@ -122,6 +122,36 @@ function pickImage(images, ...keys) {
   return undefined;
 }
 
+// Video pins carry their streams either on p.videos (regular video pins, usually HLS only)
+// or on story_pin_data blocks (idea pins, usually with MP4 renditions). Prefer a 720p MP4.
+// HLS-only pins still have a single-file rendition next to the playlist:
+//   mc/hls/<path>.m3u8  -> mc/720p/<path>.mp4
+//   iht/hls/<path>.m3u8 -> iht/hls/<path>_720w.cmfv (fragmented MP4, video track only)
+const MP4_KEYS = ['V_720P', 'V_EXP7', 'V_EXP6', 'V_EXP5', 'V_EXP4', 'V_EXP3'];
+export function pickVideo(p) {
+  const lists = [
+    p.videos?.video_list,
+    ...(p.story_pin_data?.pages || []).flatMap((pg) => (pg?.blocks || []).map((b) => b?.video?.video_list)),
+  ].filter(Boolean);
+  if (!lists.length) return undefined;
+  const all = lists.flatMap((vl) => Object.entries(vl).map(([key, v]) => ({ key, ...v }))).filter((v) => v.url);
+  const mp4 =
+    MP4_KEYS.map((k) => all.find((v) => v.key === k)).find(Boolean) || all.find((v) => /\.mp4($|\?)/.test(v.url));
+  const hls = all.find((v) => /\.m3u8($|\?)/.test(v.url));
+  const derived = hls?.url
+    .replace(/\/videos\/mc\/hls\/(.+)\.m3u8$/, '/videos/mc/720p/$1.mp4')
+    .replace(/\/videos\/iht\/hls\/(.+)\.m3u8$/, '/videos/iht/hls/$1_720w.cmfv');
+  const best = mp4 || hls;
+  if (!best) return undefined;
+  return strip({
+    video_url: mp4?.url || (derived !== hls?.url ? derived : undefined) || hls.url,
+    video_hls: hls?.url,
+    video_width: best.width,
+    video_height: best.height,
+    video_seconds: best.duration ? Math.round(best.duration / 1000) : undefined,
+  });
+}
+
 export function normalizePin(p) {
   if (!p || p.type !== 'pin' || p.is_promoted) return null;
   const orig = pickImage(p.images, 'orig', '736x', '564x', '474x', '236x');
@@ -141,7 +171,7 @@ export function normalizePin(p) {
     width: orig.width,
     height: orig.height,
     dominant_color: p.dominant_color,
-    is_video: Boolean(p.videos || p.story_pin_data?.pages?.some?.((pg) => pg?.blocks?.some?.((b) => b?.video))) || undefined,
+    ...(pickVideo(p) || {}),
     source_link: p.link || undefined,
     source_domain: p.domain && p.domain !== 'Uploaded by user' ? p.domain : undefined,
     board: p.board?.url ? strip({ name: p.board.name, url: `${BASE}${p.board.url}` }) : undefined,
@@ -157,31 +187,41 @@ function strip(obj) {
   return obj;
 }
 
-function collect(items, out, seen, limit) {
-  const before = out.length;
+const MEDIA = {
+  any: () => true,
+  video: (pin) => Boolean(pin.video_url),
+  image: (pin) => !pin.video_url,
+};
+
+// Returns how many unseen pins the page had (before the media filter), which is what
+// tells a real next page apart from a replayed one.
+function collect(items, out, seen, limit, keep) {
+  let fresh = 0;
   for (const raw of items || []) {
     if (out.length >= limit) break;
     const pin = normalizePin(raw);
     if (!pin || seen.has(pin.image_url)) continue;
     seen.add(pin.image_url);
-    out.push(pin);
+    fresh++;
+    if (keep(pin)) out.push(pin);
   }
-  return out.length - before;
+  return fresh;
 }
 
 // Paginates a resource until `limit` pins are collected or the feed ends.
 // Pinterest now and then ignores the bookmark and replays page one marked "-end-";
 // a page that adds nothing new, or an early "-end-" when `expected` says more exist,
 // is retried with the same bookmark before giving up.
-async function paged(fetchPage, limit, bookmark, expected = 0) {
+async function paged(fetchPage, limit, bookmark, expected = 0, media = 'any') {
+  const keep = MEDIA[media] || MEDIA.any;
   const out = [];
   const seen = new Set();
   let next = bookmark || undefined;
   let retries = 0;
   for (let page = 0; page < MAX_PAGES && out.length < limit; page++) {
     const { items, bookmark: bm } = await fetchPage(next);
-    const added = collect(items, out, seen, limit);
-    const endedEarly = (!bm || bm === '-end-') && out.length < Math.min(limit, expected * 0.9);
+    const added = collect(items, out, seen, limit, keep);
+    const endedEarly = media === 'any' && (!bm || bm === '-end-') && out.length < Math.min(limit, expected * 0.9);
     if (((next && !added) || endedEarly) && retries < 3) {
       retries++;
       // A degraded session keeps serving the same short feed; start a fresh one.
@@ -199,14 +239,14 @@ async function paged(fetchPage, limit, bookmark, expected = 0) {
 
 // ---------- public API ----------
 
-export async function searchPins(query, { limit = 20, bookmark } = {}) {
+export async function searchPins(query, { limit = 20, bookmark, media = 'any' } = {}) {
   const sourceUrl = `/search/pins/?q=${encodeURIComponent(query)}&rs=typed`;
   return paged(async (bm) => {
     const options = { query, scope: 'pins', rs: 'typed', redux_normalize_feed: true };
     if (bm) options.bookmarks = [bm];
     const { data, bookmark: next } = await resource('BaseSearchResource', options, sourceUrl, 'www/search/[scope].js');
     return { items: data?.results, bookmark: next };
-  }, limit, bookmark);
+  }, limit, bookmark, 0, media);
 }
 
 // Accepts a numeric id, a pinterest.*/pin/<id> URL (any regional domain) or a pin.it short link.
@@ -249,7 +289,7 @@ export async function getPin(input) {
   });
 }
 
-export async function relatedPins(input, { limit = 20, bookmark } = {}) {
+export async function relatedPins(input, { limit = 20, bookmark, media = 'any' } = {}) {
   const id = await resolvePinId(input);
   return paged(async (bm) => {
     const options = {
@@ -264,7 +304,7 @@ export async function relatedPins(input, { limit = 20, bookmark } = {}) {
     if (bm) options.bookmarks = [bm];
     const { data, bookmark: next } = await resource('RelatedModulesResource', options, `/pin/${id}/`, 'www/pin/[id].js');
     return { items: data, bookmark: next };
-  }, limit, bookmark);
+  }, limit, bookmark, 0, media);
 }
 
 function parseBoard(input) {
@@ -277,7 +317,7 @@ function parseBoard(input) {
   return { username: decodeURIComponent(parts[0]), slug: decodeURIComponent(parts[1]), path: `/${parts[0]}/${parts[1]}/` };
 }
 
-export async function boardPins(input, { limit = 25, bookmark } = {}) {
+export async function boardPins(input, { limit = 25, bookmark, media = 'any' } = {}) {
   const b = parseBoard(input);
   const handler = 'www/[username]/[slug].js';
   const { data: board } = await resource(
@@ -291,7 +331,7 @@ export async function boardPins(input, { limit = 25, bookmark } = {}) {
     if (bm) options.bookmarks = [bm];
     const { data, bookmark: next } = await resource('BoardFeedResource', options, b.path, handler);
     return { items: data, bookmark: next };
-  }, limit, bookmark, board.pin_count);
+  }, limit, bookmark, board.pin_count, media);
   return {
     board: strip({
       name: board.name,
@@ -326,7 +366,7 @@ export function resizeUrl(u, size) {
   return size === 'originals' ? swapped : swapped.replace(/\.(png|gif|webp)$/i, '.jpg');
 }
 
-const EXT = { 'image/jpeg': 'jpg', 'image/png': 'png', 'image/gif': 'gif', 'image/webp': 'webp' };
+const EXT = { 'image/jpeg': 'jpg', 'image/png': 'png', 'image/gif': 'gif', 'image/webp': 'webp', 'video/mp4': 'mp4' };
 
 async function fetchImage(u, sizes) {
   assertPinimg(u);
@@ -342,6 +382,37 @@ async function fetchImage(u, sizes) {
     lastErr = `HTTP ${res.status}`;
   }
   throw new Error(`Could not fetch ${u}: ${lastErr}`);
+}
+
+const MAX_VIDEO_BYTES = 200 * 1024 * 1024;
+const isVideoUrl = (u) => /\.(mp4|m3u8|cmfv)($|\?)/i.test(u);
+
+async function fetchVideo(u) {
+  assertPinimg(u);
+  if (/\.m3u8($|\?)/i.test(u)) {
+    throw new Error(`${u} is an HLS stream with no MP4 rendition; open it in Safari or convert it with ffmpeg`);
+  }
+  // A _720w.cmfv rendition may not exist for small videos; step down before giving up.
+  const tries = /_\d+w\.cmfv$/.test(u) ? ['720w', '540w', '360w'].map((w) => u.replace(/_\d+w\.cmfv$/, `_${w}.cmfv`)) : [u];
+  let res;
+  let type = '';
+  for (const t of tries) {
+    res = await request(t, { headers: { Referer: `${BASE}/` } }, 1);
+    type = (res.headers.get('content-type') || '').split(';')[0];
+    if (res.ok && type.startsWith('video/')) {
+      u = t;
+      break;
+    }
+    await res.body?.cancel();
+  }
+  if (!res.ok || !type.startsWith('video/')) {
+    throw new Error(`Could not fetch ${u}: HTTP ${res.status}${res.ok ? ` (${type})` : ''}; try the pin's video_hls stream instead`);
+  }
+  if (Number(res.headers.get('content-length')) > MAX_VIDEO_BYTES) {
+    await res.body?.cancel();
+    throw new Error(`${u} is larger than ${MAX_VIDEO_BYTES / 1024 / 1024} MB`);
+  }
+  return { url: u, type, buf: Buffer.from(await res.arrayBuffer()) };
 }
 
 export async function fetchPreview(u, size = '236x') {
@@ -378,7 +449,7 @@ export async function downloadImages(urls, { folder, size = 'originals', directo
   const sizes = size === 'originals' ? ['originals', '736x'] : [size, '736x', 'originals'];
   const results = await mapLimit(urls, 4, async (u, idx) => {
     try {
-      const img = await fetchImage(u, sizes);
+      const img = isVideoUrl(u) ? await fetchVideo(u) : await fetchImage(u, sizes);
       const hash = path.basename(new URL(img.url).pathname).replace(/\.\w+$/, '') ||
         crypto.createHash('sha1').update(img.url).digest('hex').slice(0, 16);
       const file = path.join(dir, `${String(idx + 1).padStart(2, '0')}_${hash}.${EXT[img.type] || 'jpg'}`);

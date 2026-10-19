@@ -2,18 +2,18 @@
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
   "name": "io.github.sunkimk/pinterest-mcp",
   "title": "Pinterest MCP",
-  "description": "Search Pinterest, see pin images, find similar pins, read boards, download originals. No login.",
+  "description": "Search Pinterest, see pins, find similar, read boards, download images and videos. No login.",
   "repository": {
     "url": "https://github.com/sunkimk/pinterest-mcp",
     "source": "github"
   },
   "websiteUrl": "https://github.com/sunkimk/pinterest-mcp",
-  "version": "1.0.2",
+  "version": "1.1.0",
   "packages": [
     {
       "registryType": "npm",
       "identifier": "@sunkimkk/pinterest-mcp",
-      "version": "1.0.2",
+      "version": "1.1.0",
       "transport": {
         "type": "stdio"
       },

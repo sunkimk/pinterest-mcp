@@ -41,7 +41,8 @@ AI 会自己去搜、看缩略图、说明挑选理由、把原图存到本地�
 - 🔁 **能深挖**：相似图、整个画板、按书签翻页。
 - 🛡️ **稳**：保持匿名会话，遇到 Pinterest 偶发的「假到底」会自动重试。
 - 🪶 **省 token**：折叠大段话题标签，去掉用不上的字段。
-- 📥 **可下载**：下载原图，取不到时自动降级到 736px；只接受 `*.pinimg.com` 的图片。
+- 🎬 **支持视频**：视频 Pin 自带 MP4 地址，可以只搜视频，找动效参考很方便。
+- 📥 **可下载**：下载原图（取不到时自动降级到 736px）和 MP4 视频；只接受 `*.pinimg.com` 的资源。
 
 ## 快速开始
 
@@ -107,9 +108,9 @@ claude mcp add pinterest --scope user -- node "$PWD/src/server.js"
 | `pinterest_related_pins` | 某个 Pin 的「更多类似内容」 |
 | `pinterest_board_pins` | 公开画板里的 Pin |
 | `pinterest_preview_images` | 把图片地址转成模型能看到的缩略图 |
-| `pinterest_download` | 把原图保存到本地 |
+| `pinterest_download` | 把原图和 MP4 视频保存到本地 |
 
-`search`、`related_pins`、`board_pins` 都支持 `previews: N`，附上前 N 张缩略图。
+`search`、`related_pins`、`board_pins` 都支持 `previews: N`，附上前 N 张缩略图；加上 `media: "video"` 只返回视频 Pin（每条带 MP4 地址 `video_url`），适合找动效、交互参考。
 
 ## 用法示例
 
@@ -117,6 +118,7 @@ claude mcp add pinterest --scope user -- node "$PWD/src/server.js"
 - 「这些图有什么共同点？布局、配色、字体分别怎么样？」
 - 「找和这张类似的：https://www.pinterest.com/pin/1128714725389331478/」
 - 「把这个画板里的图都列出来：https://www.pinterest.com/awsmd_com/app-design/」
+- 「找 10 个个人主页的动效视频并下载下来」
 - 「把第 2、5、7 张下载到 ~/Desktop/参考/登录页」
 
 > 小技巧：英文关键词结果多得多。加上 `ui`、`app`、`dribbble`、`poster`、`moodboard` 这类词可以引导风格。

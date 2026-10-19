@@ -16,7 +16,7 @@ import {
 const MAX_PREVIEWS = 16;
 const READ_ONLY = { readOnlyHint: true, openWorldHint: true };
 
-const server = new McpServer({ name: 'pinterest', version: '1.0.2' });
+const server = new McpServer({ name: 'pinterest', version: '1.1.0' });
 
 const json = (value) => ({ type: 'text', text: JSON.stringify(value) });
 
@@ -52,6 +52,10 @@ const bookmark = z
   .string()
   .optional()
   .describe('Pass next_bookmark from a previous call to get the next page');
+const media = z
+  .enum(['any', 'video', 'image'])
+  .default('any')
+  .describe('Only return video pins ("video"), only still images ("image"), or both (default)');
 const previews = z
   .number()
   .int()
@@ -69,14 +73,15 @@ tool(
     title: 'Search Pinterest',
     description:
       'Search Pinterest pins by keyword (any language) for visual inspiration. Returns title, description, ' +
-      'full-size image_url with width/height, dominant colour, source website, board and save count for each pin. ' +
+      'full-size image_url with width/height, dominant colour, source website, board and save count for each pin; ' +
+      'video pins also get video_url (MP4) and video_seconds. Set media to "video" for motion/interaction references. ' +
       'Promoted pins are filtered out. Use next_bookmark to page further. Tips: English keywords usually return more ' +
       'results; add words like "ui", "app", "dribbble", "poster", "moodboard" to steer the style.',
-    inputSchema: { query: z.string().min(1).describe('Search keywords'), limit: limit(20, 100), bookmark, previews },
+    inputSchema: { query: z.string().min(1).describe('Search keywords'), limit: limit(20, 100), bookmark, media, previews },
     annotations: READ_ONLY,
   },
-  async ({ query, limit, bookmark, previews }) => {
-    const res = await searchPins(query, { limit, bookmark });
+  async ({ query, limit, bookmark, media, previews }) => {
+    const res = await searchPins(query, { limit, bookmark, media });
     const content = [json({ query, count: res.pins.length, next_bookmark: res.next_bookmark, pins: res.pins })];
     if (previews) content.push(...(await withPreviews(res.pins, previews)));
     return { content };
@@ -112,11 +117,11 @@ tool(
     title: 'Related Pinterest pins',
     description:
       'Find pins visually and topically similar to a given pin ("More like this"). Needs a real pin link or numeric id.',
-    inputSchema: { pin: pinRef, limit: limit(20, 100), bookmark, previews },
+    inputSchema: { pin: pinRef, limit: limit(20, 100), bookmark, media, previews },
     annotations: READ_ONLY,
   },
-  async ({ pin, limit, bookmark, previews }) => {
-    const res = await relatedPins(pin, { limit, bookmark });
+  async ({ pin, limit, bookmark, media, previews }) => {
+    const res = await relatedPins(pin, { limit, bookmark, media });
     const content = [json({ count: res.pins.length, next_bookmark: res.next_bookmark, pins: res.pins })];
     if (previews) content.push(...(await withPreviews(res.pins, previews)));
     return { content };
@@ -134,12 +139,13 @@ tool(
       board: z.string().min(1).describe('Board URL or "<user>/<board>"'),
       limit: limit(25, 200),
       bookmark,
+      media,
       previews,
     },
     annotations: READ_ONLY,
   },
-  async ({ board, limit, bookmark, previews }) => {
-    const res = await boardPins(board, { limit, bookmark });
+  async ({ board, limit, bookmark, media, previews }) => {
+    const res = await boardPins(board, { limit, bookmark, media });
     const content = [json({ board: res.board, count: res.pins.length, next_bookmark: res.next_bookmark, pins: res.pins })];
     if (previews) content.push(...(await withPreviews(res.pins, previews)));
     return { content };
@@ -175,12 +181,12 @@ tool(
 tool(
   'pinterest_download',
   {
-    title: 'Download Pinterest images',
+    title: 'Download Pinterest images and videos',
     description:
-      'Save pin images (image_url values from other tools) to disk at full resolution, falling back to 736px when ' +
+      'Save pin images (image_url) and videos (video_url MP4s) to disk; images at full resolution, falling back to 736px when ' +
       `the original is unavailable. Default location: ${DOWNLOAD_ROOT}/<folder>. Returns the saved file paths.`,
     inputSchema: {
-      image_urls: z.array(z.string()).min(1).max(200).describe('i.pinimg.com image URLs'),
+      image_urls: z.array(z.string()).min(1).max(200).describe('image_url or video_url values from other tools (*.pinimg.com)'),
       folder: z.string().optional().describe('Sub-folder name, e.g. the search topic'),
       directory: z.string().optional().describe(`Absolute base directory (default ${DOWNLOAD_ROOT})`),
       size: z.enum(['originals', '736x', '474x']).default('originals').describe('Resolution to save'),

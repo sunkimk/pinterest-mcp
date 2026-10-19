@@ -41,7 +41,8 @@ The agent searches, looks at the thumbnails, explains its picks, saves full-reso
 - 🔁 **Go deeper** — related pins, whole boards, pagination with bookmarks.
 - 🛡️ **Robust** — keeps an anonymous session and retries Pinterest's occasional "fake end of feed".
 - 🪶 **Token-friendly** — hashtag walls collapsed, unusable fields dropped.
-- 📥 **Downloads** — originals with automatic 736px fallback, only from `*.pinimg.com`.
+- 🎬 **Videos too** — video pins come with an MP4 `video_url`; filter to videos only for motion references.
+- 📥 **Downloads** — image originals with automatic 736px fallback and MP4 videos, only from `*.pinimg.com`.
 
 ## Quick start
 
@@ -107,9 +108,9 @@ claude mcp add pinterest --scope user -- node "$PWD/src/server.js"
 | `pinterest_related_pins` | "More like this" for a pin |
 | `pinterest_board_pins` | Pins saved on a public board |
 | `pinterest_preview_images` | Turn image URLs into thumbnails the model can see |
-| `pinterest_download` | Save full-resolution images to disk |
+| `pinterest_download` | Save full-resolution images and MP4 videos to disk |
 
-`search`, `related_pins` and `board_pins` accept `previews: N` to attach thumbnails of the first N results.
+`search`, `related_pins` and `board_pins` accept `previews: N` to attach thumbnails of the first N results, and `media: "video"` to return only video pins (each with an MP4 `video_url`) — handy for motion and interaction references.
 
 ## Example prompts
 
@@ -117,6 +118,7 @@ claude mcp add pinterest --scope user -- node "$PWD/src/server.js"
 - *"What do these have in common — layout, palette, typography?"*
 - *"Find pins similar to https://www.pinterest.com/pin/1128714725389331478/"*
 - *"List everything on https://www.pinterest.com/awsmd_com/app-design/"*
+- *"Find 10 profile page animation videos and download them."*
 - *"Download #2, #5 and #7 to ~/Desktop/refs/login."*
 
 > Tip: English keywords return far more results. Add words like `ui`, `app`, `dribbble`, `poster` or `moodboard` to steer the style.

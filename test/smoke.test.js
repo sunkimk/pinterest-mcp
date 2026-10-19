@@ -53,6 +53,17 @@ test('search paginates and attaches previews', async () => {
   assert.ok(second.data.pins.some((p) => !seen.has(p.image_url)));
 });
 
+test('media filter returns only video pins and downloads an MP4', async () => {
+  const { data } = await call('pinterest_search', { query: 'app ui animation', limit: 5, media: 'video' });
+  assert.equal(data.pins.length, 5);
+  assert.ok(data.pins.every((p) => p.video_url));
+  const mp4 = data.pins.find((p) => /\.(mp4|cmfv)$/.test(p.video_url));
+  assert.ok(mp4, 'expected at least one downloadable video');
+  const { data: dl } = await call('pinterest_download', { image_urls: [mp4.video_url], folder: 'video test' });
+  assert.equal(dl.saved.length, 1);
+  assert.ok(dl.saved[0].path.endsWith('.mp4'));
+});
+
 test('pin details and related pins', async () => {
   const { data: pin } = await call('pinterest_get_pin', { pin: PIN });
   assert.equal(pin.id, '1128714725389331478');
