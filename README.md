@@ -15,7 +15,7 @@
   <p><b>English</b> · <a href="./README.zh-CN.md">简体中文</a></p>
 </div>
 
-**Pinterest MCP** gives Claude Code, Codex, Cursor and any other MCP client direct access to Pinterest — search pins, *actually look at* the images, follow "more like this", read boards, and download originals. It's built for designers and front-end developers who start every task by collecting references.
+**Pinterest MCP** is an open-source MCP Server that gives Claude Code, Codex, Cursor and any other MCP client direct access to Pinterest — search pins, *actually look at* the images, follow "more like this", read boards, and download originals. It's built for designers and front-end developers who start every task by collecting references.
 
 No Pinterest login. No API key. No headless browser.
 

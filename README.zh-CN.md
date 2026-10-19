@@ -15,7 +15,7 @@
   <p><a href="./README.md">English</a> · <b>简体中文</b></p>
 </div>
 
-**Pinterest MCP** 让 Claude Code、Codex、Cursor 等任何 MCP 客户端直接用上 Pinterest：搜图、**真正看到图**、顺着「更多类似内容」往下找、读画板、下载原图。专为每次动手前都要先找参考的设计师和前端开发者打造。
+**Pinterest MCP** 是一个开源的 MCP Server，让 Claude Code、Codex、Cursor 等任何 MCP 客户端直接用上 Pinterest：搜图、**真正看到图**、顺着「更多类似内容」往下找、读画板、下载原图。专为每次动手前都要先找参考的设计师和前端开发者打造。
 
 不用登录 Pinterest，不用 API Key，不用启动浏览器。
 
