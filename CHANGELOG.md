@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+### Added
+- Pins whose largest image is under 500px wide (some pins only exist as a 236px thumbnail, even at their `originals` URL) are marked `low_res: true`, and previews label them with their size.
+
 ## [1.1.0] - 2026-10-19
 
 ### Added

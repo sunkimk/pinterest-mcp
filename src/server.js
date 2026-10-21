@@ -26,7 +26,8 @@ async function withPreviews(pins, count) {
     picked.map(async (p, i) => {
       try {
         const img = await fetchPreview(p.image_url);
-        return [{ type: 'text', text: `#${i + 1}${p.title ? ` ${p.title}` : ''}` }, { type: 'image', ...img }];
+        const lowRes = p.low_res ? ` [low-res: ${p.width}×${p.height}]` : '';
+        return [{ type: 'text', text: `#${i + 1}${p.title ? ` ${p.title}` : ''}${lowRes}` }, { type: 'image', ...img }];
       } catch {
         return [];
       }
@@ -74,7 +75,8 @@ tool(
     description:
       'Search Pinterest pins by keyword (any language) for visual inspiration. Returns title, description, ' +
       'full-size image_url with width/height, dominant colour, source website, board and save count for each pin; ' +
-      'video pins also get video_url (MP4) and video_seconds. Set media to "video" for motion/interaction references. ' +
+      'video pins also get video_url (MP4) and video_seconds. Pins whose largest image is under 500px wide are marked ' +
+      'low_res: true; skip them when you need a full-size reference. Set media to "video" for motion/interaction references. ' +
       'Promoted pins are filtered out. Use next_bookmark to page further. Tips: English keywords usually return more ' +
       'results; add words like "ui", "app", "dribbble", "poster", "moodboard" to steer the style.',
     inputSchema: { query: z.string().min(1).describe('Search keywords'), limit: limit(20, 100), bookmark, media, previews },

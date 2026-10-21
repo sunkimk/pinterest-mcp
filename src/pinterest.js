@@ -152,10 +152,15 @@ export function pickVideo(p) {
   });
 }
 
+// Some pins were only ever uploaded as a thumbnail: their "originals" URL is no larger than
+// the 236x rendition. Flag them so a model doesn't pick one expecting a full-size image.
+export const LOW_RES_WIDTH = 500;
+
 export function normalizePin(p) {
   if (!p || p.type !== 'pin' || p.is_promoted) return null;
   const orig = pickImage(p.images, 'orig', '736x', '564x', '474x', '236x');
   if (!orig) return null;
+  const lowRes = Number(orig.width) > 0 && orig.width < LOW_RES_WIDTH;
   const numeric = /^\d+$/.test(String(p.id));
   const saves = p.aggregated_pin_data?.aggregated_stats?.saves ?? p.repin_count;
   const reactions = p.reaction_counts
@@ -170,6 +175,7 @@ export function normalizePin(p) {
     image_url: orig.url,
     width: orig.width,
     height: orig.height,
+    low_res: lowRes || undefined,
     dominant_color: p.dominant_color,
     ...(pickVideo(p) || {}),
     source_link: p.link || undefined,
