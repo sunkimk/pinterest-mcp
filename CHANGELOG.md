@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## [1.2.0] - 2026-10-21
+
 ### Added
 - Pins whose largest image is under 500px wide (some pins only exist as a 236px thumbnail, even at their `originals` URL) are marked `low_res: true`, and previews label them with their size.
 
@@ -44,7 +46,8 @@ First public release. 🎉
 - Detects Pinterest's occasional "fake end of feed" or replayed page and retries with a fresh session.
 - Promoted pins are filtered out; hashtag walls in descriptions are collapsed to save tokens.
 
-[Unreleased]: https://github.com/sunkimk/pinterest-mcp/compare/v1.1.0...HEAD
+[Unreleased]: https://github.com/sunkimk/pinterest-mcp/compare/v1.2.0...HEAD
+[1.2.0]: https://github.com/sunkimk/pinterest-mcp/compare/v1.1.0...v1.2.0
 [1.1.0]: https://github.com/sunkimk/pinterest-mcp/compare/v1.0.1...v1.1.0
 [1.0.1]: https://github.com/sunkimk/pinterest-mcp/compare/v1.0.0...v1.0.1
 [1.0.0]: https://github.com/sunkimk/pinterest-mcp/releases/tag/v1.0.0

@@ -3,7 +3,7 @@
   "manifest_version": "0.3",
   "name": "pinterest-mcp",
   "display_name": "Pinterest MCP",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Let your AI agent browse Pinterest: search pins, see images, find similar pins, read boards and download originals. No login, no API key, no browser.",
   "long_description": "Pinterest MCP gives your AI assistant direct access to Pinterest for design inspiration. Search pins in any language, attach thumbnails so the model can actually see them, follow related pins, read public boards and save full-resolution images to disk. It talks to the same JSON endpoints pinterest.com uses, so there is no login, no API key and no headless browser. Not affiliated with Pinterest.",
   "author": {

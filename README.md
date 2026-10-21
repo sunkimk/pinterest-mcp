@@ -37,7 +37,7 @@ The agent searches, looks at the thumbnails, explains its picks, saves full-reso
 
 - ⚡ **Fast** — talks to the same JSON endpoints pinterest.com uses; ~2–3 s for 20 pins, no Chrome to launch.
 - 👀 **The model can see** — optional thumbnails are returned as images, so the agent judges style, layout and colour, not just titles.
-- 🧾 **Rich metadata** — title, description, full-size URL and dimensions, dominant colour, source site, board, creator, date. Ads are filtered out.
+- 🧾 **Rich metadata** — title, description, full-size URL and dimensions (thumbnail-only pins flagged `low_res`), dominant colour, source site, board, creator, date. Ads are filtered out.
 - 🔁 **Go deeper** — related pins, whole boards, pagination with bookmarks.
 - 🛡️ **Robust** — keeps an anonymous session and retries Pinterest's occasional "fake end of feed".
 - 🪶 **Token-friendly** — hashtag walls collapsed, unusable fields dropped.
