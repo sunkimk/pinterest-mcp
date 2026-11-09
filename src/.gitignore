@@ -62,3 +62,7 @@ docs/
 
 # Local editor/agent settings
 .claude/
+
+# Copied in from the repo root by prepack, removed by postpack
+/README.md
+/LICENSE

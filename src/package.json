@@ -27,7 +27,9 @@
   },
   "scripts": {
     "start": "node src/server.js",
-    "test": "node --test test/*.test.js"
+    "test": "node --test test/*.test.js",
+    "prepack": "cp ../README.md ../LICENSE .",
+    "postpack": "rm -f README.md LICENSE"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.32.1",
